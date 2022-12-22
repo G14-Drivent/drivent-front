@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import useHotelRooms from '../../hooks/api/useHotelRooms';
 
-export default function Hotel({ hotel: { id, name, image }, selected: { selected, setSelected } }) {
+export default function Hotel({ hotel: { id, name, image }, selected: { selectedHotel, setSelectedHotel } }) {
   const { hotelRooms, hotelRoomsError, hotelRoomsLoading } = useHotelRooms(id);
   let roomtypes = '';
   let vacancy = 0;
@@ -12,15 +12,17 @@ export default function Hotel({ hotel: { id, name, image }, selected: { selected
   }
 
   return (
-    <HotelContainer selected={selected===id} onClick={() => setSelected(id)}>
-      <img src={image} alt='' />
-      <h4>{name}</h4>
-      <h5>Tipos de acomodação</h5>
-      <h5>{roomtypes}</h5>
-      <SmallJump/>
-      <h5>Vagas disponíveis</h5>
-      <h5>{vacancy}</h5>
-    </HotelContainer>
+    <>
+      <HotelContainer selected={selectedHotel===id} onClick={() => setSelectedHotel(id)}>
+        <img src={image} alt='' />
+        <h4>{name}</h4>
+        <h5>Tipos de acomodação</h5>
+        <h5>{roomtypes}</h5>
+        <SmallJump/>
+        <h5>Vagas disponíveis</h5>
+        <h5>{vacancy}</h5>
+      </HotelContainer>
+    </>
   );
 }
 

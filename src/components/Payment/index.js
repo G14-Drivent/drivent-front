@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import SelectingTicketType from './SelectingTicketType/index';
 import useEnrollment from '../../hooks/api/useEnrollment';
 import { GreenVerifyer } from './greenVerifyer';
-import useTicketByUserId from '../../hooks/api/useTicketByUserId';
 import useTicket from '../../hooks/api/useTicket';
 import TicketChoosed from './PaymentTicket/TicketChoosed';
 import {
-  ColumRow, Row, Title,
-  SectionTitle, StyledDiv,
-  InfoTitle, ChoosedTicket,
+  ColumRow,
+  Row,
+  Title,
+  StyledDiv,
+  InfoTitle,
   EnrollTitle
 } from './section';
 
@@ -17,12 +18,10 @@ export function PaymentPage() {
   const [Enroll, SetEnroll
   ] = useState('');
 
-  //const { getTicket } = usePayment();
   const { getEnrollment } = useEnrollment();
   const { getTicket } = useTicket();
 
   const { ticket, ticketError, ticketLoading } = useTicket();
-  const { userTicket } = useTicketByUserId();
 
   useEffect(() => {
     GetPayment();
