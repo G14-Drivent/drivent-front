@@ -5,7 +5,7 @@ export default function TicketChoosed( { ticket, ticketError, ticketLoading }) {
   if(ticketError || ticketLoading) {
     return (
       <StyledTypography variant="h6">
-     Ingresso escolhido
+        Ingresso escolhido
       </StyledTypography>
     );
   }
@@ -13,13 +13,13 @@ export default function TicketChoosed( { ticket, ticketError, ticketLoading }) {
   return (
     <>
       <StyledTypography variant="h6">
-     Ingresso escolhido
+        Ingresso escolhido
       </StyledTypography>
 
       <TicketByUser>
         <OptionsBox>
-          <h1> {ticket.TicketType.name} </h1>
-          <h4>R$ {ticket.TicketType.price} </h4>
+          <h1> {ticket?.TicketType.name} </h1>
+          <h4>R$ {ticket?.TicketType.price} </h4>
         </OptionsBox>     
       </TicketByUser>
     </>

@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useHotelRooms from '../../hooks/api/useHotelRooms';
-import usePostBooking from '../../hooks/api/usePostBooking';
+import * as useBooking from '../../hooks/api/useBooking';
 import Room from './Room';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-export default function ChooseRoom({ selectedHotel }) {
+export default function ChooseRoom({ set: { Setbookinginfo }, selectedHotel: { selectedHotel, setSelectedHotel } }) {
   const [ selectedRoom, setSelectedRoom ] = useState(null);
 
   const { hotelRooms, hotelRoomsError, hotelRoomsLoading, getHotelRooms } = useHotelRooms(selectedHotel);
-  const { postBooking } = usePostBooking(selectedRoom);
+  const { postBooking } = useBooking.usePostBooking(selectedRoom);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getHotelRooms();
@@ -22,6 +26,10 @@ export default function ChooseRoom({ selectedHotel }) {
   function confirmRoom() {
     postBooking();
     setSelectedRoom(null);
+    setSelectedHotel(null);
+    Setbookinginfo(null);
+    toast('Ticket reservado com sucesso!');
+    navigate('/dashboard/activities');
   }
 
   return (

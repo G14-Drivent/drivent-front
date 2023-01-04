@@ -5,6 +5,7 @@ import 'react-credit-cards-2/es/styles-compiled.css';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import usePayment from '../../../hooks/api/usePayment';
+import { toast } from 'react-toastify';
 
 export default function CardForPayment( { ticket, Paid, SetPaid } ) {
   const [cardNumber, setCardNumber] = useState('');
@@ -36,7 +37,7 @@ export default function CardForPayment( { ticket, Paid, SetPaid } ) {
       await postPayment(payment);
       SetPaid(!Paid);
     }catch(err) {
-      alert('não foi possível realizar seu pagamento');
+      toast('não foi possível realizar seu pagamento');
     };
   };
 

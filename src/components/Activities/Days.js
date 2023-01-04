@@ -1,19 +1,26 @@
 import styled from 'styled-components';
 
-export default function Days({ day }) {
+export default function Days({ day, selected: { selectedDay, setSelectedDay } }) {
+  const date = day?.date.toString().substr(5, 5);
+  const dateMonth = date.slice(0, 2);
+  const dateDay = date.slice(3, 5);
+
+  console.log(selectedDay);
+  
   return (
-    <DayStyled>
+    <DayStyled selected={selectedDay===day?.id} onClick={() => setSelectedDay(day?.id)}>
       <h6>
-        {day.name}, {day.date}
+        {day?.weekday}, {dateDay}/{dateMonth}
       </h6>
     </DayStyled>
   );
 }
 
 const DayStyled = styled.div`
+  cursor: pointer;
   min-width: 130px;
   height: 40px;
-  background-color: #e0e0e0;
+  background-color: ${props => (props.selected)? '#FFD37D;' : '#e0e0e0;'};
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   margin: 0 10px;
