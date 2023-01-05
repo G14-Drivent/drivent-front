@@ -20,11 +20,12 @@ export default function ChooseHotel() {
 
   const [ selectedHotel, setSelectedHotel ] = useState(null);
   const [ roomswap, setRoomswap ] = useState(false);
+  const [ reload, setReload ] = useState(false);
 
   useEffect(() => {
     getEnroll();
     VerifyBooking();
-  }, [ bookinginfo ]);
+  }, [ reload ]);
 
   async function getEnroll() {
     const ticketApi = await getTicket();
@@ -37,61 +38,51 @@ export default function ChooseHotel() {
     if(bookingApi) setBookinginfo(bookingApi);
   }
 
-  if(bookinginfo && !roomswap) {
+  if(!ticketinfo || !ticketpaid) {
     return (
       <>
         <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-        <Message>Você já escolheu seu quarto:</Message> 
+        <HotelTitle>
+          {(ticketinfo)?
+            'Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem'
+            :
+            'Sua modalidade de ingresso não inclui hospedagem <br/> Prossiga para a escolha de Atividades'
+          }
+        </HotelTitle>
+      </>
+    );
+  } else if(hotelsLoading || hotelsError || !hotels?.length) {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Não há hoteis disponíveis</Message>
+      </>
+    );
+  } else if(bookinginfo && !roomswap) {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Você já escolheu seu quarto:</Message>
         <HotelCard bookinginfo = {bookinginfo}/>
         <BookRoomButton onClick={() => { setRoomswap(true); }}>TROCAR DE QUARTO</BookRoomButton>
       </>
     );
-  }
-
-  return (
-    <>
-      <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      {(ticketinfo)?
-        ((ticketpaid)?
-          ((hotelsLoading || hotelsError || !hotels?.length)?
-            (
-              <>
-                <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-                <Message>Não há hoteis disponíveis</Message> 
-              </>
-            )
-            :
-            (
-              <>
-                <Message>Primeiro escolha o hotel</Message>
-                <Hotels>
-                  {hotels.map((hotel, index) => <Hotel hotel={hotel} selected={{ selectedHotel, setSelectedHotel }} key={index} />)}
-                </Hotels>
-                {(selectedHotel)?
-                  <ChooseRoom hotel={{ selectedHotel, setSelectedHotel }} booking={{ bookinginfo, setBookinginfo, roomswap, setRoomswap }}/>
-                  :
-                  <></>
-                }
-              </>
-            )
-          )
+  } else {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Primeiro escolha o hotel</Message>
+        <Hotels>
+          {hotels.map((hotel, index) => <Hotel hotel={hotel} selected={{ selectedHotel, setSelectedHotel }} key={index} />)}
+        </Hotels>
+        {(selectedHotel)?
+          <ChooseRoom state={{ reload, setReload }} hotel={{ selectedHotel, setSelectedHotel }} booking={{ bookinginfo, setBookinginfo, roomswap, setRoomswap }}/>
           :
-          ( 
-            <HotelTitle>
-              Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem
-            </HotelTitle> 
-          )
-        )
-        :
-        (
-          <HotelTitle>
-            Sua modalidade de ingresso não inclui hospedagem <br/>
-            Prossiga para a escolha de Atividades
-          </HotelTitle> 
-        )
-      }
-    </>
-  );
+          <></>
+        }
+      </>
+    );
+  }
 }
 
 const StyledTypography = styled(Typography)`
