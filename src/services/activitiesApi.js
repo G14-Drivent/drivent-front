@@ -26,3 +26,12 @@ export async function getActivities({ token, dateId, spaceId }) {
   });
   return response.data;
 }
+
+export async function getActivitiesBookingCount({ token, activitieId }) {
+  const response = await api.get(`/activities/booking/${activitieId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}

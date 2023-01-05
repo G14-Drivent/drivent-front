@@ -1,11 +1,28 @@
 import { Typography } from '@material-ui/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { RxEnter, RxCrossCircled } from 'react-icons/rx';
+import useActivitiesBookingCount from '../../hooks/api/useActivitieBookingCount';
 
 export default function ActivitieContainer({ activitiesInfo }) {
+  const activitieId = activitiesInfo.id;
+
   const [isItFull, setIsItFull] = useState(true);
+  const [activitieVacancy, setActivitieVacancy] = useState(activitiesInfo.capacity);
+
+  const { activitieBookingCount } = useActivitiesBookingCount(activitieId);
+
+  function attVacancy() {
+    setActivitieVacancy(Number(activitiesInfo.capacity) - activitieBookingCount?.activitiesBookingCount);
+    if (activitieVacancy === 0) {
+      setIsItFull(false);
+    };
+  };
+
+  useEffect(() => {
+    attVacancy();
+  }, [activitieBookingCount]);
 
   return (
     <ActivitieStyle duration={activitiesInfo.duration}>
@@ -24,7 +41,7 @@ export default function ActivitieContainer({ activitiesInfo }) {
       <ActivitieVacancyBox isItFull={isItFull}>
         {isItFull? <RxEnter /> : <RxCrossCircled />}
         <ActivitieStatus>
-          {isItFull? <>{activitiesInfo.capacity} vagas</> : <>Esgotado</>}
+          {isItFull? <>{activitieVacancy} vagas</> : <>Esgotado</>}
         </ActivitieStatus>
       </ActivitieVacancyBox>
     </ActivitieStyle>
