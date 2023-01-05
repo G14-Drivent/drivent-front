@@ -11,7 +11,7 @@ export default function ActivitieContainer({ activitiesInfo }) {
   const [isItFull, setIsItFull] = useState(true);
   const [activitieVacancy, setActivitieVacancy] = useState(activitiesInfo.capacity);
 
-  const { activitieBookingCount, getActivitieBookingCount } = useActivitiesBookingCount(activitieId);
+  const { activitieBookingCount } = useActivitiesBookingCount(activitieId);
 
   function attVacancy() {
     setActivitieVacancy(Number(activitiesInfo.capacity) - activitieBookingCount?.activitiesBookingCount);
