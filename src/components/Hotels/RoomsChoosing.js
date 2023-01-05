@@ -5,7 +5,11 @@ import * as useBooking from '../../hooks/api/useBooking';
 import Room from './Room';
 import { toast } from 'react-toastify';
 
-export default function ChooseRoom({ booking: { bookinginfo, setBookinginfo, roomswap, setRoomswap  }, hotel: { selectedHotel, setSelectedHotel } }) {
+export default function ChooseRoom(
+  { state: { reload, setReload },
+    booking: { bookinginfo, setBookinginfo, roomswap, setRoomswap  },
+    hotel: { selectedHotel, setSelectedHotel }
+  }) {
   const { hotelRooms, hotelRoomsError, hotelRoomsLoading, getHotelRooms } = useHotelRooms(selectedHotel);
   const { postBooking, postBookingError } = useBooking.usePostBooking();
   const { updateBooking, updateBookingError } = useBooking.useUpdateBooking();
@@ -26,16 +30,16 @@ export default function ChooseRoom({ booking: { bookinginfo, setBookinginfo, roo
       toast('Você já tem uma reserva nesse quarto!');
       return;
     }
-
     if(!roomswap) {
-      postBooking(selectedRoom);
+      postBooking(selectedRoom).then(() => setReload(!reload));
     } else {
-      updateBooking(bookinginfo?.id, selectedRoom);
+      updateBooking(bookinginfo?.id, selectedRoom).then(() => setReload(!reload));
     }
     setSelectedRoom(null);
     setSelectedHotel(null);
     setBookinginfo(null);
     setRoomswap(false);
+
     if(postBookingError || updateBookingError) {
       toast('Reserva falhou!');
     } else {
