@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import AuthLayout from '../../layouts/Auth';
 
@@ -12,6 +13,10 @@ import Link from '../../components/Link';
 import EventInfoContext from '../../contexts/EventInfoContext';
 
 import useSignUp from '../../hooks/api/useSignUp';
+
+import Oauth from '../../components/Auth/Oauth';
+import googleLogo from '../../assets/images/googleicon.png';
+import githubLogo from '../../assets/images/github.png';
 
 export default function Enroll() {
   const [email, setEmail] = useState('');
@@ -55,9 +60,19 @@ export default function Enroll() {
           <Button type="submit" color="primary" fullWidth disabled={loadingSignUp}>Inscrever</Button>
         </form>
       </Row>
+      <Row2>
+        <Oauth name={'Google'} image={googleLogo} color={'indianred'}/>
+        <Oauth name={'Github'} image={githubLogo} color={'DarkGray'}/>
+      </Row2>
       <Row>
         <Link to="/sign-in">Já está inscrito? Faça login</Link>
       </Row>
     </AuthLayout>
   );
 }
+
+const Row2= styled.div`
+margin-top:10px;
+width:100%;
+margin-bottom:5px;
+`;

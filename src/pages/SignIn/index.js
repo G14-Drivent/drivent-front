@@ -14,6 +14,10 @@ import UserContext from '../../contexts/UserContext';
 
 import useSignIn from '../../hooks/api/useSignIn';
 
+import Oauth from '../../components/Auth/Oauth';
+import googleLogo from '../../assets/images/googleicon.png';
+import githubLogo from '../../assets/images/github.png';
+
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,6 +55,10 @@ export default function SignIn() {
           <Input label="Senha" type="password" fullWidth value={password} onChange={e => setPassword(e.target.value)} />
           <Button type="submit" color="primary" fullWidth disabled={loadingSignIn}>Entrar</Button>
         </form>
+      </Row>
+      <Row>
+        <Oauth name={'Google'} image={googleLogo} color={'indianred'}/>
+        <Oauth name={'Github'} image={githubLogo} color={'DarkGray'}/>
       </Row>
       <Row>
         <Link to="/enroll">Não possui login? Inscreva-se</Link>
