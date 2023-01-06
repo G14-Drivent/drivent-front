@@ -4,8 +4,6 @@ export default function Days({ day, selected: { selectedDay, setSelectedDay } })
   const date = day?.date.toString().substr(5, 5);
   const dateMonth = date.slice(0, 2);
   const dateDay = date.slice(3, 5);
-
-  console.log(selectedDay);
   
   return (
     <DayStyled selected={selectedDay===day?.id} onClick={() => setSelectedDay(day?.id)}>

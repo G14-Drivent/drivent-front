@@ -18,14 +18,15 @@ export function useGetBooking() {
     bookingError,
   };
 }
-export function usePostBooking(roomId) {
+
+export function usePostBooking() {
   const token = useToken();
 
   const {
     loading: postBookingLoading,
     error: postBookingError,
     act: postBooking
-  } = useAsync(() => bookingApi.postBookings({ roomId }, token));
+  } = useAsync((roomId) => bookingApi.postBooking({ roomId }, token));
 
   return {
     postBookingLoading,
@@ -34,3 +35,18 @@ export function usePostBooking(roomId) {
   };
 }
 
+export function useUpdateBooking() {
+  const token = useToken();
+
+  const {
+    loading: updateBookingLoading,
+    error: updateBookingError,
+    act: updateBooking
+  } = useAsync((bookingId, roomId) => bookingApi.updateBooking(bookingId, { roomId }, token));
+
+  return {
+    updateBookingLoading,
+    updateBookingError,
+    updateBooking,
+  };
+}

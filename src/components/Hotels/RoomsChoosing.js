@@ -4,32 +4,48 @@ import useHotelRooms from '../../hooks/api/useHotelRooms';
 import * as useBooking from '../../hooks/api/useBooking';
 import Room from './Room';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 
-export default function ChooseRoom({ set: { Setbookinginfo }, selectedHotel: { selectedHotel, setSelectedHotel } }) {
-  const [ selectedRoom, setSelectedRoom ] = useState(null);
-
+export default function ChooseRoom(
+  { state: { reload, setReload },
+    booking: { bookinginfo, setBookinginfo, roomswap, setRoomswap  },
+    hotel: { selectedHotel, setSelectedHotel }
+  }) {
   const { hotelRooms, hotelRoomsError, hotelRoomsLoading, getHotelRooms } = useHotelRooms(selectedHotel);
-  const { postBooking } = useBooking.usePostBooking(selectedRoom);
+  const { postBooking, postBookingError } = useBooking.usePostBooking();
+  const { updateBooking, updateBookingError } = useBooking.useUpdateBooking();
 
-  const navigate = useNavigate();
+  const [ selectedRoom, setSelectedRoom ] = useState(null);
 
   useEffect(() => {
     getHotelRooms();
-  }, [selectedHotel]);
- 
+  }, [ selectedHotel ]);
+
   let rooms = [];
   if(!hotelRoomsError && !hotelRoomsLoading ) {
     rooms = hotelRooms.Rooms;
   }
 
   function confirmRoom() {
-    postBooking();
+    if(roomswap && bookinginfo?.roomId === selectedRoom) {
+      toast('Você já tem uma reserva nesse quarto!');
+      return;
+    }
+    if(!roomswap) {
+      postBooking(selectedRoom).then(() => setReload(!reload));
+    } else {
+      updateBooking(bookinginfo?.id, selectedRoom).then(() => setReload(!reload));
+    }
     setSelectedRoom(null);
     setSelectedHotel(null);
-    Setbookinginfo(null);
-    toast('Ticket reservado com sucesso!');
-    navigate('/dashboard/activities');
+    setBookinginfo(null);
+    setRoomswap(false);
+
+    if(postBookingError || updateBookingError) {
+      toast('Reserva falhou!');
+    } else {
+      toast('Ticket reservado com sucesso!');
+    }
+    return;
   }
 
   return (
@@ -38,7 +54,11 @@ export default function ChooseRoom({ set: { Setbookinginfo }, selectedHotel: { s
       <Rooms>
         {rooms.map((room, index) => <Room room={room} selected={{ selectedRoom, setSelectedRoom }} key={index}/>)}
       </Rooms>
-      {(selectedRoom)? <BookRoomButton onClick={() => confirmRoom()}>RESERVAR QUARTO</BookRoomButton> : <></>}
+      {(selectedRoom)?
+        <BookRoomButton onClick={() => confirmRoom()}>{(roomswap)? 'TROCAR RESERVA' : 'RESERVAR QUARTO'}</BookRoomButton>
+        :
+        <></>
+      }
     </>
   );
 }

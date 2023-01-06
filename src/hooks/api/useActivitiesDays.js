@@ -1,7 +1,7 @@
 import useAsync from '../useAsync';
 import useToken from '../useToken';
 
-import * as activitiesDaysApi from '../../services/activitiesDaysApi';
+import * as activitiesApi from '../../services/activitiesApi';
 
 export default function useActivitiesDays() {
   const token = useToken();
@@ -9,7 +9,7 @@ export default function useActivitiesDays() {
     data: activitieDays,
     loading: activitieDaysLoading,
     error: activitieDaysError,
-  } = useAsync(() => activitiesDaysApi.getActivitiesDate(token));
+  } = useAsync(() => activitiesApi.getActivitiesDate(token));
 
   return {
     activitieDays,

@@ -10,19 +10,22 @@ import HotelCard from './ChosedRoom';
 
 export default function ChooseHotel() {
   const { hotels, hotelsError, hotelsLoading } = useHotels();
-  const [ selectedHotel, setSelectedHotel ] = useState(null);
 
   const { getTicket } = useTicket();
-  const [ticketinfo, setTicketinfo] = useState(false);
-  const [ticketpaid, setTicketpaid] = useState(false);
+  const [ ticketinfo, setTicketinfo ] = useState(false);
+  const [ ticketpaid, setTicketpaid ] = useState(false);
 
   const { getBookings } = useBooking.useGetBooking();
-  const [bookinginfo, Setbookinginfo] = useState(null);
+  const [ bookinginfo, setBookinginfo ] = useState(null);
+
+  const [ selectedHotel, setSelectedHotel ] = useState(null);
+  const [ roomswap, setRoomswap ] = useState(false);
+  const [ reload, setReload ] = useState(false);
 
   useEffect(() => {
     getEnroll();
     VerifyBooking();
-  }, [selectedHotel, bookinginfo]);
+  }, [ reload ]);
 
   async function getEnroll() {
     const ticketApi = await getTicket();
@@ -32,59 +35,54 @@ export default function ChooseHotel() {
 
   async function VerifyBooking() {
     const bookingApi = await getBookings();
-    if(bookingApi)  Setbookinginfo(bookingApi);
+    if(bookingApi) setBookinginfo(bookingApi);
   }
 
-  if(bookinginfo) {
+  if(!ticketinfo || !ticketpaid) {
     return (
       <>
         <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-        <Message>Você já escolheu seu quarto:</Message> 
+        <HotelTitle>
+          {(ticketinfo)?
+            'Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem'
+            :
+            'Sua modalidade de ingresso não inclui hospedagem <br/> Prossiga para a escolha de Atividades'
+          }
+        </HotelTitle>
+      </>
+    );
+  } else if(hotelsLoading || hotelsError || !hotels?.length) {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Não há hoteis disponíveis</Message>
+      </>
+    );
+  } else if(bookinginfo && !roomswap) {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Você já escolheu seu quarto:</Message>
         <HotelCard bookinginfo = {bookinginfo}/>
+        <BookRoomButton onClick={() => { setRoomswap(true); }}>TROCAR DE QUARTO</BookRoomButton>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        <Message>Primeiro escolha o hotel</Message>
+        <Hotels>
+          {hotels.map((hotel, index) => <Hotel hotel={hotel} selected={{ selectedHotel, setSelectedHotel }} key={index} />)}
+        </Hotels>
+        {(selectedHotel)?
+          <ChooseRoom state={{ reload, setReload }} hotel={{ selectedHotel, setSelectedHotel }} booking={{ bookinginfo, setBookinginfo, roomswap, setRoomswap }}/>
+          :
+          <></>
+        }
       </>
     );
   }
-
-  return (
-    <>
-      <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      {(ticketinfo)?
-        ((ticketpaid)?
-          ((hotelsLoading || hotelsError || !hotels?.length)?
-            (
-              <>
-                <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-                <Message>Não há hoteis disponíveis</Message> 
-              </>
-            )
-            :
-            (
-              <>
-                <Message>Primeiro escolha o hotel</Message>
-                <Hotels>
-                  {hotels.map((hotel, index) => <Hotel hotel={hotel} selected={{ selectedHotel, setSelectedHotel }} key={index} />)}
-                </Hotels>
-                {(selectedHotel)? <ChooseRoom selectedHotel={{ selectedHotel, setSelectedHotel }} set={{ Setbookinginfo }}/> : <></>}
-              </>
-            )
-          )
-          :
-          ( 
-            <HotelTitle>
-              Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem
-            </HotelTitle> 
-          )
-        )
-        :
-        (
-          <HotelTitle>
-            Sua modalidade de ingresso não inclui hospedagem <br/>
-            Prossiga para a escolha de Atividades
-          </HotelTitle> 
-        )
-      }
-    </>
-  );
 }
 
 const StyledTypography = styled(Typography)`
@@ -119,4 +117,14 @@ const HotelTitle = styled.div`
   width: 50%;
   margin-left:25%;
   margin-top:30%;
+`;
+
+const BookRoomButton = styled.button`
+  width: 182px;
+  height: 37px;
+  background-color: #E0E0E0;
+  border: transparent;
+  border-radius: 4px;
+  margin: 30px 0px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
 `;
