@@ -6,6 +6,30 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import usePayment from '../../../hooks/api/usePayment';
 import { toast } from 'react-toastify';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
+const CARD_OPTIONS = {
+  shapes: {
+    borderRadius: 12,
+    borderWidth: 0.5,
+  },
+  primaryButton: {
+    shapes: {
+      borderRadius: 20,
+    },
+  },
+  colors: {
+    primary: '#fcfdff',
+    background: '#ffffff',
+    componentBackground: '#f3f8fa',
+    componentBorder: '#f3f8fa',
+    componentDivider: '#000000',
+    primaryText: '#000000',
+    secondaryText: '#000000',
+    componentText: '#000000',
+    placeholderText: '#73757b',
+  },
+};
 
 export default function CardForPayment( { ticket, Paid, SetPaid } ) {
   const [cardNumber, setCardNumber] = useState('');
@@ -14,46 +38,57 @@ export default function CardForPayment( { ticket, Paid, SetPaid } ) {
   const [cardName, setCardName] = useState('');
   const [cardIssuer, setCardIssuer] = useState('');
   const [cardFocus, setCardFocus] =  useState('');
- 
+
   const { postPayment } = usePayment();
-        
-  function handleInputFocus(e) { 
+
+  const stripe = useStripe();
+  const elements = useElements();
+
+  function handleInputFocus(e) {
     setCardFocus(e.target.name);
   };
-   
+
   async function handleForm(e) {
     e.preventDefault();
-    const payment = {
-      ticketId: ticket.id,
-      cardData: {
-        issuer: cardIssuer,
-        name: cardName,
-        number: cardNumber,
-        cvv: cardCVC,
-        expirationDate: cardDateExp,
-      }
-    };
     try{
-      await postPayment(payment);
-      SetPaid(!Paid);
+      const cardElement = elements.getElement(CardElement);
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement
+      });
+      const payment = {
+        ticketId: ticket.id,
+        cardData: {
+          id: paymentMethod,
+          issuer: cardIssuer,
+          name: cardName,
+          number: cardNumber,
+          cvv: cardCVC,
+          expirationDate: cardDateExp,
+        }
+      };
+      if(!error) {
+        await postPayment(payment);
+        SetPaid(!Paid);
+      }
     }catch(err) {
       toast('não foi possível realizar seu pagamento');
-    };
+    }
   };
 
   function handleCallback({ issuer }) {
     setCardIssuer((issuer).toUpperCase());
-  } 
+  }
 
   return(
-    <> 
-      <StyledTypography variant="h6" id="StyledTy">
+    <>
+      <StyledTypography variant='h6' id='StyledTy'>
       Pagamento
       </StyledTypography>
-      <FormCardContainer id="PaymentForm">
-        <Form onSubmit={handleForm} id="Form">
-          <ContainerInfos id="ContainerInfos">
-            <CardContainer id="CardContainer">
+      <FormCardContainer id='PaymentForm'>
+        <Form onSubmit={handleForm} id='Form'>
+          <ContainerInfos id='ContainerInfos'>
+            <CardContainer id='CardContainer'>
               <Cards
                 cvc={cardCVC}
                 expiry={cardDateExp}
@@ -61,60 +96,18 @@ export default function CardForPayment( { ticket, Paid, SetPaid } ) {
                 name={cardName}
                 number={cardNumber}
                 callback={handleCallback}
-              /> 
-            </CardContainer>  
-            <ContainerForm id="ContainerForm">
-              <ContainerName id="ContainerName">
-                <Input
-                  type="text"
-                  id="number" required
-                  value={cardNumber}
-                  maxLength="16"
-                  placeholder="Card Number"
-                  onChange={ (e) => setCardNumber(e.target.value)} 
-                  onFocus={ (e) => handleInputFocus(e) }
-                />
-                <Info>E.g..: 49..., 51..., 36..., 37...</Info>
-              </ContainerName>
-              <Input
-                type="text"
-                id="name"required
-                value={cardName}
-                maxLength="17"
-                placeholder="Name"
-                onChange={ (e) => setCardName(e.target.value)} 
-                onFocus={ (e) => handleInputFocus(e) }
               />
-              <BoxInfo id="BoxInfo">
-                <Input2
-                  type="text"
-                  id="expiry" required
-                  autoComplete='off'
-                  maxLength="4"
-                  value={cardDateExp}
-                  placeholder="Valid Thru"
-                  onChange={ (e) => setCardDateExp(e.target.value)} 
-                  onFocus={ (e) => handleInputFocus(e) }
-                />
-                <Input3
-                  type="text"
-                  id="cvc" required
-                  maxLength="3"
-                  autoComplete='off'
-                  value={cardCVC}
-                  placeholder="CVC"
-                  onChange={ (e) => setCardCVC(e.target.value)} 
-                  onFocus={ (e) => handleInputFocus(e) }
-                />
-              </BoxInfo> 
+            </CardContainer>
+            <ContainerForm id='ContainerForm'>
+              <CardElement options={CARD_OPTIONS}/>
             </ContainerForm>
           </ContainerInfos>
           <Button>
-            FINALIZAR PAGAMENTO  
+            FINALIZAR PAGAMENTO
           </Button>
         </Form>
-      </FormCardContainer > 
-    </> 
+      </FormCardContainer >
+    </>
   );
 }
 
@@ -134,6 +127,7 @@ display:flex;
 const ContainerForm = styled.div`
 display:flex;
 flex-direction:column;
+width:100%;
 justify-content:space-evenly;
 `;
 
@@ -142,12 +136,8 @@ margin-left: 0px;
 margin-right:30px;
 `;
 
-const BoxInfo = styled.div`
-display:flex;
-justify-content:space-between;
-`;
-
 const Form = styled.form`
+width:100%;
 display:flex;
 flex-direction:column;
 `;
@@ -160,24 +150,6 @@ border-color:#E0E0E0;
 padding:10px;
 font-size:16px;
 border: 1px solid #8e8e8e;
-`;
-
-const Input2 = styled(Input)`
-width:200px;
-`;
-
-const Input3 = styled(Input)`
-width:70px;
-`;
-
-const ContainerName = styled.div`
-
-`;
-
-const Info = styled.h1`
-color:gray;
-font-size:15px;
-margin-top:5px;
 `;
 
 const Button = styled.button`
