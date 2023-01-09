@@ -15,7 +15,7 @@ import UserContext from '../../contexts/UserContext';
 import useSignIn from '../../hooks/api/useSignIn';
 
 import Oauth from '../../components/Auth/Oauth';
-import googleLogo from '../../assets/images/googleicon.png';
+import googleLogo from '../../assets/images/google2.png';
 import githubLogo from '../../assets/images/github.png';
 
 export default function SignIn() {
