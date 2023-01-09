@@ -33,16 +33,16 @@ export default function TicketHotelMode({ setIncludesHotel, setShowHotelButton, 
       </StyledTypography>
 
       <OptionsBar>
-        <PaymentOptionsBox onClick={selectWithoutHotel} 
+        <PaymentOptionsBox onClick={selectWithoutHotel}  
           style={{
             backgroundColor: isHotelActive ? '#FFEED2' : ''
           }}>
 
           <h6>
-            {withoutHotelTicket.name}
+            {withoutHotelTicket?.name}
           </h6>
           <h6>
-            + R$ {(withoutHotelTicket.price - withoutHotelTicket.price) / 100}
+            + R$ {(withoutHotelTicket?.price - withoutHotelTicket?.price) / 100}
           </h6>
         </PaymentOptionsBox>
         <PaymentOptionsBox onClick={selectWithHotel}
@@ -51,10 +51,10 @@ export default function TicketHotelMode({ setIncludesHotel, setShowHotelButton, 
           }}>
 
           <h6>
-            {withHotelTicket.name}
+            {withHotelTicket?.name}
           </h6>
           <h6>
-            + R$ {(withHotelTicket.price - withoutHotelTicket.price) / 100}
+            + R$ {(withHotelTicket?.price - withoutHotelTicket?.price) / 100}
           </h6>
         </PaymentOptionsBox>
       </OptionsBar>
