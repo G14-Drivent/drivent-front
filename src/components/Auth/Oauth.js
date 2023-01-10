@@ -12,6 +12,8 @@ export default function Oauth({ name, image, color }) {
   const { setUserData } = useContext(UserContext);
   const navigate = useNavigate();
   const auth = getAuth(app);
+  let email;
+  let password;
 
   async function signInOauth() {
     let userData;
@@ -20,12 +22,12 @@ export default function Oauth({ name, image, color }) {
       provider = new GoogleAuthProvider();
     }
     if(name === 'Github') {
-      provider = new GithubAuthProvider();
+      provider = new GithubAuthProvider(); 
     }
-    const signInOauth = await signInWithPopup(auth, provider);
-    const email = signInOauth.user.email;
-    const password = signInOauth.user.uid;
     try{
+      const signInOauth = await signInWithPopup(auth, provider);
+      email = signInOauth.user.email;
+      password = signInOauth.user.uid;
       userData = await signIn(email, password);
       setUserData(userData);
       toast('Login realizado com sucesso!');
@@ -38,6 +40,7 @@ export default function Oauth({ name, image, color }) {
         toast('Login realizado com sucesso!');
         navigate('/dashboard');
       }catch(error) {
+        console.log(error);
         toast('Não foi possível fazer o login!');
       }
     }
@@ -45,7 +48,7 @@ export default function Oauth({ name, image, color }) {
 
   return (
     <Oauthdiv type="submit" color={color} fullWidth onClick={signInOauth}>
-      <Access>Acesse com o {name}</Access>
+      <Access>Sign in with {name}</Access>
       <Image src={image}/>
     </Oauthdiv> 
   );
@@ -53,10 +56,10 @@ export default function Oauth({ name, image, color }) {
 
 const Oauthdiv = styled.button`
 display:flex;
-width:100%;
+width:65%;
+height:30px;
 background-color: ${props => props.color};
 box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
-padding: 6px 16px;
 font-size: 0.875rem;
 min-width: 64px;
 box-sizing: border-box;
@@ -69,6 +72,7 @@ letter-spacing: 0.02857em;
 text-transform: uppercase;
 justify-content: center;
 text-decoration: none;
+align-items:center;
 border: 0;
 cursor: pointer;
 margin-bottom: 5px;
@@ -80,6 +84,6 @@ color:white;
 
 const Image = styled.img`
 width:20px;
-height:20px;
+height:80%;
 margin-left:10px;
 `;

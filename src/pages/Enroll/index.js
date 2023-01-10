@@ -75,4 +75,8 @@ const Row2= styled.div`
 margin-top:10px;
 width:100%;
 margin-bottom:5px;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 `;
