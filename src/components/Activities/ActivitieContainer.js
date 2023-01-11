@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { RxEnter, RxCrossCircled } from 'react-icons/rx';
 import useActivitiesBookingCount from '../../hooks/api/useActivitieBookingCount';
 
-export default function ActivitieContainer({ activitiesInfo }) {
+export default function ActivitieContainer({ selectedActivitie, setSelectedActivitie, activitiesInfo }) {
   const activitieId = activitiesInfo.id;
 
   const [isItFull, setIsItFull] = useState(true);
@@ -38,7 +38,7 @@ export default function ActivitieContainer({ activitiesInfo }) {
 
       </ActivitieInfoBox>
       
-      <ActivitieVacancyBox isItFull={isItFull}>
+      <ActivitieVacancyBox onClick={() => setSelectedActivitie(activitiesInfo.id)} isItFull={isItFull}>
         {isItFull? <RxEnter /> : <RxCrossCircled />}
         <ActivitieStatus>
           {isItFull? <>{activitieVacancy} vagas</> : <>Esgotado</>}

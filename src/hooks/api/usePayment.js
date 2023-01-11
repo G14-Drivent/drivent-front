@@ -10,7 +10,7 @@ export default function usePayment() {
     loading: paymentLoading,
     error: paymentError,
     act: postPayment
-  } = useAsync((data) =>  paymentApi.postPayment(data, token), false);
+  } = useAsync((data) => paymentApi.postPayment(data, token), false);
   
   return {
     postPayment,

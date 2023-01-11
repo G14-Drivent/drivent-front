@@ -35,3 +35,12 @@ export async function getActivitiesBookingCount({ token, activitieId }) {
   });
   return response.data;
 }
+
+export async function postActivitieBooking({ token, activitieId }) {
+  const response = await api.post(`/activities/booking/${activitieId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
