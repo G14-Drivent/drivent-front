@@ -37,7 +37,7 @@ export async function getActivitiesBookingCount({ token, activitieId }) {
 }
 
 export async function postActivitieBooking({ token, activitieId }) {
-  const response = await api.post(`/activities/booking/${activitieId}`, {
+  const response = await api.post(`/activities/booking/${activitieId}`, {}, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

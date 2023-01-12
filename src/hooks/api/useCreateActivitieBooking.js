@@ -11,7 +11,7 @@ export default function useCreateActivitieBooking() {
     loading: createActivitieBookingLoading,
     error: createActivitieBookingError,
     act: postCreateActivitieBooking,
-  } = useAsync((activitieId) => activitiesApi.postActivitieBooking({ token, activitieId }));
+  } = useAsync((activitieId) => activitiesApi.postActivitieBooking({ activitieId, token }));
 
   return {
     activitieBooking,

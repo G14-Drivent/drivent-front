@@ -18,18 +18,17 @@ export default function SpacesContainer({ containerInfo }) {
 
   useEffect(() => {
     getActivities(dateId, spaceId);
-  }, [dateId, spaceId]);
+  }, [dateId, spaceId, selectedActivitie]);
 
   useEffect(() => {
     if(!selectedActivitie) return;
     if(window.confirm('Reservar atividade?')) {
       postCreateActivitieBooking(selectedActivitie)
-        .then(() => toast('Reservado com sucesso!'))
-        .catch((error) => toast('Falha ao reservar!'));
-      setSelectedActivitie(null);
+        .then(() => { toast('Reservado com sucesso!'); setSelectedActivitie(null); })
+        .catch((error) => { toast('Falha ao reservar!'); setSelectedActivitie(null); });
     }
     return;
-  }, [selectedActivitie]);
+  }, [ selectedActivitie ]);
 
   if (activitiesLoading)
     return (
