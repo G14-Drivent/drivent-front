@@ -19,7 +19,7 @@ export default function TicketChoosed( { ticket, ticketError, ticketLoading }) {
       <TicketByUser>
         <OptionsBox>
           <h1> {ticket?.TicketType.name} </h1>
-          <h4>R$ {ticket?.TicketType.price} </h4>
+          <h4>R$ {(ticket?.TicketType.price/100).toFixed(2)} </h4>
         </OptionsBox>     
       </TicketByUser>
     </>
