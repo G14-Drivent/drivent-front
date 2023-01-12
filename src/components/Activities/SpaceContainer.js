@@ -14,11 +14,11 @@ export default function SpacesContainer({ containerInfo }) {
   const [ selectedActivitie, setSelectedActivitie ] = useState(null);
 
   const { activities, activitiesLoading, activitiesError, getActivities } = useActivities(dateId, spaceId);
-  const { postCreateActivitieBooking, createActivitieBookingLoading, createActivitieBookingError } = useCreateActivitieBooking();
+  const { postCreateActivitieBooking } = useCreateActivitieBooking();
 
   useEffect(() => {
     getActivities(dateId, spaceId);
-  }, [dateId, spaceId, selectedActivitie]);
+  }, [ dateId, spaceId, selectedActivitie ]);
 
   useEffect(() => {
     if(!selectedActivitie) return;

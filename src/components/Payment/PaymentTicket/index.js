@@ -3,7 +3,6 @@ import CardForPayment from './CardForPayment';
 import useTicket from '../../../hooks/api/useTicket';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 export default function PaymentTicket( { Paid, SetPaid } ) {
   const { ticket, ticketError, ticketLoading } = useTicket();
