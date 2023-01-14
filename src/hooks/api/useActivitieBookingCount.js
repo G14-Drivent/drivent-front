@@ -5,6 +5,7 @@ import * as activitiesApi from '../../services/activitiesApi';
 
 export default function useActivitiesBookingCount(activitieId) {
   const token = useToken();
+  
   const {
     data: activitieBookingCount,
     loading: activitieBookingCountLoading,

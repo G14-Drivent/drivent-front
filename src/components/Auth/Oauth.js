@@ -40,7 +40,6 @@ export default function Oauth({ name, image, color }) {
         toast('Login realizado com sucesso!');
         navigate('/dashboard');
       }catch(error) {
-        console.log(error);
         toast('Não foi possível fazer o login!');
       }
     }
