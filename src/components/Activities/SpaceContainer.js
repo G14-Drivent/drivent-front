@@ -3,16 +3,32 @@ import styled from 'styled-components';
 
 import ActivitieContainer from './ActivitieContainer';
 import useActivities from '../../hooks/api/useActivities';
-import { useEffect } from 'react';
+import useCreateActivitieBooking from '../../hooks/api/useCreateActivitieBooking';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function SpacesContainer({ containerInfo }) {
   const dateId = containerInfo.selectedDay;
   const spaceId = containerInfo.space.id;
+
+  const [ selectedActivitie, setSelectedActivitie ] = useState(null);
+
   const { activities, activitiesLoading, activitiesError, getActivities } = useActivities(dateId, spaceId);
+  const { postCreateActivitieBooking } = useCreateActivitieBooking();
 
   useEffect(() => {
     getActivities(dateId, spaceId);
-  }, [dateId, spaceId]);
+  }, [ dateId, spaceId, selectedActivitie ]);
+
+  useEffect(() => {
+    if(!selectedActivitie) return;
+    if(window.confirm('Reservar atividade?')) {
+      postCreateActivitieBooking(selectedActivitie)
+        .then(() => { toast('Reservado com sucesso!'); setSelectedActivitie(null); })
+        .catch((error) => { toast('Falha ao reservar!'); setSelectedActivitie(null); });
+    }
+    return;
+  }, [ selectedActivitie ]);
 
   if (activitiesLoading)
     return (
@@ -44,8 +60,14 @@ export default function SpacesContainer({ containerInfo }) {
         <SpaceStyle>
           {containerInfo.space.name}
           <SpaceActivities>
-            
-            {activities?.map((activitiesInfo) => <ActivitieContainer activitiesInfo={ activitiesInfo } />)}
+
+            {activities?.map((activitiesInfo) =>
+              <ActivitieContainer 
+                selectedActivitie={ selectedActivitie }
+                setSelectedActivitie={ setSelectedActivitie }
+                activitiesInfo={ activitiesInfo } 
+              />
+            )}
 
           </SpaceActivities>
         </SpaceStyle>

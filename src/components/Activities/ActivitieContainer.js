@@ -2,16 +2,16 @@ import { Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { RxEnter, RxCrossCircled } from 'react-icons/rx';
+import { RxEnter, RxCrossCircled, RxCheckCircled } from 'react-icons/rx';
 import useActivitiesBookingCount from '../../hooks/api/useActivitieBookingCount';
 
-export default function ActivitieContainer({ activitiesInfo }) {
+export default function ActivitieContainer({ selectedActivitie, setSelectedActivitie, activitiesInfo }) {
   const activitieId = activitiesInfo.id;
 
-  const [isItFull, setIsItFull] = useState(true);
-  const [activitieVacancy, setActivitieVacancy] = useState(activitiesInfo.capacity);
-
   const { activitieBookingCount } = useActivitiesBookingCount(activitieId);
+
+  const [ isItFull, setIsItFull ] = useState(true);
+  const [ activitieVacancy, setActivitieVacancy ] = useState(activitiesInfo.capacity);
 
   function attVacancy() {
     setActivitieVacancy(Number(activitiesInfo.capacity) - activitieBookingCount?.activitiesBookingCount);
@@ -22,7 +22,7 @@ export default function ActivitieContainer({ activitiesInfo }) {
 
   useEffect(() => {
     attVacancy();
-  }, [activitieBookingCount]);
+  }, [ activitieBookingCount, selectedActivitie ]);
 
   return (
     <ActivitieStyle duration={activitiesInfo.duration}>
@@ -38,12 +38,21 @@ export default function ActivitieContainer({ activitiesInfo }) {
 
       </ActivitieInfoBox>
       
-      <ActivitieVacancyBox isItFull={isItFull}>
-        {isItFull? <RxEnter /> : <RxCrossCircled />}
-        <ActivitieStatus>
-          {isItFull? <>{activitieVacancy} vagas</> : <>Esgotado</>}
-        </ActivitieStatus>
-      </ActivitieVacancyBox>
+      {(activitieBookingCount?.userBooked) ?
+        <ActivitieVacancyBox isBooked={activitieBookingCount?.userBooked} isItFull={true}>
+          <RxCheckCircled />
+          <ActivitieStatus>
+            <>Inscrito</>
+          </ActivitieStatus>
+        </ActivitieVacancyBox>
+        :
+        <ActivitieVacancyBox onClick={() => setSelectedActivitie(activitiesInfo.id)} isItFull={isItFull}>
+          {isItFull? <RxEnter /> : <RxCrossCircled />}
+          <ActivitieStatus>
+            {isItFull? <>{activitieVacancy} vagas</> : <>Esgotado</>}
+          </ActivitieStatus>
+        </ActivitieVacancyBox>
+      }
     </ActivitieStyle>
   );
 }
@@ -78,6 +87,7 @@ const ActivitieVacancyBox = styled(Typography)`
 
   width: 65px;
   color: ${props => (props.isItFull)? '#078632;' : '#CC6666;'};
+  font-weight: ${props => (props.isBooked)? '1000;' : '400'};
 `;
 
 const ActivitieName = styled(Typography)`
