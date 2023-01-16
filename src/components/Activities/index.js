@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Days from './Days';
 import SpacesContainer from './SpaceContainer';
@@ -10,24 +10,26 @@ import useTicket from '../../hooks/api/useTicket';
 import useActivitiesDays from '../../hooks/api/useActivitiesDays';
 import useActivitiesSpace from '../../hooks/api/useActivitiesSpace';
 
-export default function PaymentScreen() {
+export default function ActivitiesScreen() {
   const { enrollment, enrollmentError, enrollmentLoading } = useEnrollment();
   const { ticket, ticketError, ticketLoading } = useTicket();
   const { activitieDays, activitieDaysLoading, activitieDaysError } = useActivitiesDays();
-  const { activitieSpace } = useActivitiesSpace();
+  const { activitieSpace, activitieSpaceLoading } = useActivitiesSpace();
 
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [ days, setDays ] = useState([]);
+  const [ spaces, setSpaces ] = useState([]);
+  const [ selectedDay, setSelectedDay ] = useState(null);
 
-  if(enrollmentLoading || enrollmentError || enrollment === null)
+  useEffect(() => {
+    setDays(activitieDays);
+    setSpaces(activitieSpace);
+  }, [ activitieDaysLoading, activitieSpaceLoading ]);
+
+  if(!ticket || enrollmentLoading || enrollmentError || enrollment === null)
     return(
       <>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
-
-        <StyledCenteredText>
-          <StyledTypography variant='h6'>
-          Você precisa completar sua incrição antes de prosseguir para escolha de atividades.
-          </StyledTypography>
-        </StyledCenteredText>
+        <ErrorTitle>Você precisa completar sua incrição e ticket antes de prosseguir para escolha de atividades.</ErrorTitle>
       </>
     );
 
@@ -35,12 +37,7 @@ export default function PaymentScreen() {
     return (
       <>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
-
-        <StyledCenteredText>
-          <StyledTypography variant='h6'>
-            Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.
-          </StyledTypography>
-        </StyledCenteredText>
+        <ErrorTitle>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</ErrorTitle>
       </>
     );
 
@@ -48,16 +45,11 @@ export default function PaymentScreen() {
     return (
       <>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
-
-        <StyledCenteredText>
-          <StyledTypography variant='h6'>
-            Você precisa ter confirmado pagamento antes de fazer a escolha de atividades
-          </StyledTypography>
-        </StyledCenteredText>
+        <ErrorTitle>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</ErrorTitle>
       </>
     );
 
-  if(!activitieDaysLoading || !activitieDaysError || activitieDays?.length)
+  if(!activitieDaysLoading && !activitieDaysError && days?.length)
     return (
       <>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
@@ -69,25 +61,33 @@ export default function PaymentScreen() {
         }
 
         <DaysContainer>
-          {activitieDays?.map((day) => <Days day={ day } selected={{ selectedDay, setSelectedDay }}/>)}
+          {days?.map((day) => <Days day={ day } selected={{ selectedDay, setSelectedDay }}/>)}
         </DaysContainer>
 
-        {(selectedDay)? <SpaceContainerStyle>{activitieSpace?.map((space) => <SpacesContainer containerInfo={{ space, selectedDay }} />)}</SpaceContainerStyle> : <></>}
+        {(selectedDay)? <SpaceContainerStyle>{spaces?.map((space) => <SpacesContainer containerInfo={{ space, selectedDay }} />)}</SpaceContainerStyle> : <></>}
       </>
     );
+  
+  return(
+    <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
+  );
 }
-
-const StyledCenteredText = styled(Typography)`
-  height: 80%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-`;
 
 const StyledTypography = styled(Typography)`
   margin-bottom: 20px!important;
+`;
+
+const ErrorTitle = styled.div`
+  font-family: 'Roboto', sans-serif;
+  color: #8e8e8e;
+  display: flex;
+  flex-direction: flex;
+  justify-content: center;
+  align-items:center;
+  height:20%;
+  width: 50%;
+  margin-left:25%;
+  margin-top:30%;
 `;
 
 const DaysContainer = styled(Typography)`

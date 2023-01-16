@@ -46,7 +46,7 @@ export default function ChooseHotel() {
           {(ticketinfo)?
             'Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem'
             :
-            'Sua modalidade de ingresso não inclui hospedagem <br/> Prossiga para a escolha de Atividades'
+            'Sua modalidade de ingresso não inclui hospedagem, prossiga para a escolha de Atividades'
           }
         </HotelTitle>
       </>
