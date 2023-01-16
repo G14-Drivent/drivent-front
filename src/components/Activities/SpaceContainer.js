@@ -12,6 +12,7 @@ export default function SpacesContainer({ containerInfo }) {
   const spaceId = containerInfo.space.id;
 
   const [ selectedActivitie, setSelectedActivitie ] = useState(null);
+  const [ activitiesList, setActivitiesList] = useState([]);
 
   const { activities, activitiesLoading, activitiesError, getActivities } = useActivities(dateId, spaceId);
   const { postCreateActivitieBooking } = useCreateActivitieBooking();
@@ -19,6 +20,10 @@ export default function SpacesContainer({ containerInfo }) {
   useEffect(() => {
     getActivities(dateId, spaceId);
   }, [ dateId, spaceId, selectedActivitie ]);
+
+  useEffect(() => {
+    setActivitiesList(activities);
+  }, [ activitiesLoading ]);
 
   useEffect(() => {
     if(!selectedActivitie) return;
@@ -58,10 +63,10 @@ export default function SpacesContainer({ containerInfo }) {
     return (
       <SpacesContainerStyle>
         <SpaceStyle>
-          {containerInfo.space.name}
+          {containerInfo?.space?.name}
           <SpaceActivities>
 
-            {activities?.map((activitiesInfo) =>
+            {activitiesList?.map((activitiesInfo) =>
               <ActivitieContainer 
                 selectedActivitie={ selectedActivitie }
                 setSelectedActivitie={ setSelectedActivitie }

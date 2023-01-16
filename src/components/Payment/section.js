@@ -82,5 +82,5 @@ align-items:center;
 height:100%;
 width: 50%;
 margin-left:25%;
-margin-top:25%;
+margin-top:30%;
 `;
